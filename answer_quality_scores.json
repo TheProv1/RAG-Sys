@@ -10,3 +10,7 @@
 {"query_id": "Q4", "scores": {"completeness": 0, "specificity": 0, "tone": 0}}
 {"query_id": "Q6", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
 {"query_id": "Q8", "scores": {"completeness": 2, "specificity": 2, "tone": 2}}
+{"query_id": "Q3", "scores": {"completeness": 3, "specificity": 6, "tone": 7}}
+{"query_id": "Q4", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q6", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q8", "scores": {"completeness": 2, "specificity": 2, "tone": 2}}
