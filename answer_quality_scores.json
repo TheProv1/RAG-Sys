@@ -1,0 +1,12 @@
+{"query_id": "Q3", "scores": {"completeness": 7, "specificity": 8, "tone": 6}}
+{"query_id": "Q4", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q6", "scores": {"completeness": 0, "specificity": 0, "tone": 0}}
+{"query_id": "Q8", "scores": {"completeness": 7, "specificity": 9, "tone": 6}}
+{"query_id": "Q3", "scores": {"completeness": 7, "specificity": 8, "tone": 6}}
+{"query_id": "Q4", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q6", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q8", "scores": {"completeness": 7, "specificity": 9, "tone": 6}}
+{"query_id": "Q3", "scores": {"completeness": 0, "specificity": 0, "tone": 0}}
+{"query_id": "Q4", "scores": {"completeness": 0, "specificity": 0, "tone": 0}}
+{"query_id": "Q6", "scores": {"completeness": 6, "specificity": 7, "tone": 5}}
+{"query_id": "Q8", "scores": {"completeness": 2, "specificity": 2, "tone": 2}}

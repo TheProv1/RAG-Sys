@@ -1,13 +1,13 @@
 {
   "sources": [
-    "https://deriv.com/help-centre/trading/",
+    "https://deriv.com/help-centre/about-deriv/",
+    "https://deriv.com/help-centre/fraud-prevention/",
     "https://deriv.com/help-centre/deposits-and-withdrawals/",
     "https://deriv.com/help-centre/security/",
     "https://deriv.com/help-centre/account/",
     "https://deriv.com/help-centre/verification/",
-    "https://deriv.com/help-centre/traders-hub/",
+    "https://deriv.com/help-centre/trading/",
     "https://deriv.com/help-centre/trading-tools/",
-    "https://deriv.com/help-centre/fraud-prevention/",
-    "https://deriv.com/help-centre/about-deriv/"
+    "https://deriv.com/help-centre/traders-hub/"
   ]
 }
