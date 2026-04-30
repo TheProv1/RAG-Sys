@@ -21,3 +21,4 @@
 {"query_id": "Q6", "answer": "[95c73047]\n\nThe context does not contain the information about a fee for depositing via cryptocurrency."}
 {"query_id": "Q8", "answer": "[bd7de5db]\n\nUnfortunately, The context does not contain the answer."}
 {"query_id": "cli_1777533180", "answer": "[fe12d886]\n\nYour credit card deposit was declined due to SCA failure. Please contact your bank to check and resolve the issue before attempting another deposit."}
+{"query_id": "cli_1777533180", "answer": "[75dfae62]\n\nSince your credit card deposit got declined, we recommend checking if it's due to a CVV failure, deposit limit, SCA failure, or RCS reject. You can contact your bank to check the reason for the decline and try again after 1-2 hours to make a deposit."}

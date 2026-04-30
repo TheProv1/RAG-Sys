@@ -57,5 +57,169 @@
     ],
     "fallback": true,
     "final_response": "I cannot confidently answer this based on the retrieved context. (Confidence: 0.72). You might find help here: https://deriv.com/help-centre/deposits-and-withdrawals/"
+  },
+  {
+    "query_id": "cli_1777533180",
+    "query": "My card was declined",
+    "search_query": "My card was declined",
+    "retrieved_chunks": [
+      {
+        "chunk_id": "f76a8e75",
+        "source_url": "https://deriv.com/help-centre/deposits-and-withdrawals/",
+        "section_title": "Help Centre FAQ",
+        "chunk_index": 1,
+        "token_count": 349,
+        "content_hash": "364b5221bcdcda20359386a834ae152e5cf5eae4a10dc86f8a8a0e574dff344c",
+        "text": "Here are some reasons why your credit card deposit was declined:\n\n1.   CVV failure. Please contact your bank to check.\n2.   Deposit limit, please try again after 1 - 2 hours to make a deposit.\n3.   SCA failure. Please contact your bank to check.\n4.   RCS reject, allowed number of cards exceeded. Please contact your bank to check.\n\nIf you need help, please contact us via live chat.\n\n## Can I withdraw my deposit bonus?\n\nYes, but only once your turnover exceeds an amount that's 25 times the deposit bonus value. The bonus is to help you get familiar with our trading platforms, so we'd love for you to use it to trade and earn a potential profit (which you may withdraw at any time).\n\n\u200d\n\n## What conversion rates do you use for deposits and withdrawals?\n\nThe currency conversion for your deposits and withdrawals are done by your payment service provider. For example, if you use Skrill, your transaction amount will be converted by Skrill. Please check with your service provider regarding the conversion rates used for your deposits and withdrawals.\n\n## How can I cancel my withdrawal?\n\nTo cancel your withdrawal, follow these steps:\n\n1.   Go to Withdrawal.\n2.   We'll send you an email with a verification link. Click that link.\n3.   You\u2019ll be brought back to the Withdrawal page. Click **Review pending** and select the transaction that you'd like to cancel.\n4.   Click **Yes** to confirm the cancellation. Your funds will be returned to your Deriv account, and your account balance will be updated.\n\n**Note**: You cannot cancel withdrawals if your withdrawal request has already been authorised and processed.",
+        "similarity": 0.757443368434906
+      },
+      {
+        "chunk_id": "fe12d886",
+        "source_url": "https://deriv.com/help-centre/verification/",
+        "section_title": "Help Centre FAQ",
+        "chunk_index": 2,
+        "token_count": 19,
+        "content_hash": "8f89ce20cf6f7e831c610a715bcd73770fbd5d8aa8a39fd99f679f7b28ecc8ef",
+        "text": "\u200d\n\nSorry, we couldn\u2019t find any results with \u201c\n\n\u201d in it.\n\n##",
+        "similarity": 0.6130422353744507
+      },
+      {
+        "chunk_id": "6ad50e8d",
+        "source_url": "https://deriv.com/help-centre/verification/",
+        "section_title": "Help Centre FAQ",
+        "chunk_index": 1,
+        "token_count": 348,
+        "content_hash": "78beffb04db1569a879f2879ef3a96dcece6ee02c235c618de5936fda3a3012c",
+        "text": "Accepted proof of address documents include:\n    *   Utility bill\n    *   Bank statement\n    *   Municipal and property tax bill\n    *   Telephone (landline) bill and/or home internet package (landline)\n    *   Official residence declaration or Affidavit\n    *   Official letters issued by the government, solicitor, or an independent source\n    *   Rental or tenancy agreement\n\n## Why do I need to verify my account?\n\nOur regulators require us to verify your account in accordance with anti-money laundering (AML) and Know Your Customer (KYC) laws. If we have prompted you to upload your documents to verify your account, you'll only be able to continue using our services after your account is verified.\n\nFor further information, please check our Terms and conditions.\n\n\u200d\n\n## Can I trade without verifying my account?\n\nIf you have an EU account:\n\nNo, you must verify your account before trading.\n\nIf you have a non-EU account:\n\nYes, as long as you haven\u2019t been prompted to verify your account with us.\n\n\u200d\n\n## How long does verification take?\n\nWe try to review your verification documents within the same day. In some cases, due to high traffic, it may take up to 3 business days. You\u2019ll get a confirmation email from us once the review is complete. You can also check the status of your documents through:\n\nSettings > Proof of identity\n\nSettings > Proof of address\n\n\u200d\n\n## Why were my documents declined?\n\nWe may have declined your documents because they were unclear, invalid, expired, had cropped edges, or showed details that did not match your Deriv profile. If you need help, please contact us via live chat.",
+        "similarity": 0.6125531792640686
+      },
+      {
+        "chunk_id": "75dfae62",
+        "source_url": "https://deriv.com/help-centre/trading-tools/",
+        "section_title": "Help Centre FAQ",
+        "chunk_index": 3,
+        "token_count": 47,
+        "content_hash": "712986eebc92adabd550de040d7c7b3bc477aca560b208f12abefb3136a04ba7",
+        "text": "?\n\nSubscribers will stop receiving trades if signals are paused or discontinued. You may want to inform subscribers if you plan to make changes to your signal availability.\n\nSorry, we couldn\u2019t find any results with \u201c\n\n\u201d in it.\n\n##",
+        "similarity": 0.5933911204338074
+      },
+      {
+        "chunk_id": "f511bd3a",
+        "source_url": "https://deriv.com/help-centre/deposits-and-withdrawals/",
+        "section_title": "Help Centre FAQ",
+        "chunk_index": 0,
+        "token_count": 341,
+        "content_hash": "730792c507ac22544669378a17114f2907c1acaaa1958287f4ceccd564eba116",
+        "text": "## What payment methods can I use for deposits and withdrawals?\n\nYou can use debit and credit cards, e-wallets, cryptocurrency wallets, Deriv P2P, online banking, and fiat onramp for deposits and withdrawals (see our Payment methods page for a detailed list).\n\nOnce you log in to your Deriv account, you\u2019ll be able to see payment methods available in your country when you manage your funds.\n\n## How long does it take for my deposits and withdrawals to be processed?\n\nWe process your deposits and withdrawals internally within 24 hours (depending on your payment method and internal checks). It may take longer for your funds to reach you due to the different processing times by banks and payment service providers. See our Payment methods page for a complete list of the processing times for each payment method.\n\n## What is the minimum deposit or withdrawal amount?\n\nThe minimum deposit and withdrawal amount varies depending on the payment method. The lowest deposit and withdrawal amount is 5 to 10 USD/EUR/GBP/AUD via e-wallets. See our Payment methods page for a complete list of payment methods and their minimum deposit and withdrawal amounts.\n\n## My withdrawal verification link has expired. What should I do?\n\nBe sure to check the spam or junk section of your email if you do not receive the link in your inbox.\n\nTo request a new link, go to Withdrawal and click **Verify my request**. We\u2019ll email you a new link, so please use it within 1 hour.\n\n## How can I remove the withdrawal limit on my account?\n\nWe'll remove the 10,000 USD withdrawal limit once your account has been verified.\n\n## Why did my credit card deposit get declined?",
+        "similarity": 0.5712523460388184
+      }
+    ],
+    "fallback": false,
+    "generated_answer": "[fe12d886]\n\nYour credit card deposit was declined due to SCA failure. Please contact your bank to check and resolve the issue before attempting another deposit.",
+    "grounding_verification": [
+      {
+        "claim": "Your credit card deposit was declined due to SCA failure.",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "fe12d886"
+        ],
+        "explanation": "This claim is directly supported by the Context, which states: 3. SCA failure. Please contact your bank to check."
+      },
+      {
+        "claim": "We process your deposits and withdrawals internally within 24 hours (depending on your payment method and internal checks).",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "This claim is directly supported by the Context, which states: We process your deposits and withdrawals internally within 24 hours (depending on your payment method and internal checks)."
+      },
+      {
+        "claim": "The minimum deposit and withdrawal amount varies depending on the payment method.",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "This claim is directly supported by the Context, which states: The minimum deposit and withdrawal amount varies depending on the payment method."
+      },
+      {
+        "claim": "We'll remove the 10,000 USD withdrawal limit once your account has been verified.",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "This claim is directly supported by the Context, which states: We'll remove the 10,000 USD withdrawal limit once your account has been verified."
+      },
+      {
+        "claim": "Your credit card deposit was declined due to CVV failure.",
+        "grounded": false,
+        "supporting_chunk_ids": [
+          "f76a8e75"
+        ],
+        "explanation": "This claim is not directly supported by the Context, which states: 1. CVV failure. Please contact your bank to check."
+      }
+    ],
+    "regeneration_triggered": true,
+    "ungrounded_claims": [
+      "Your credit card deposit was declined due to CVV failure."
+    ],
+    "regeneration_prompt_hash": "be30c7504783a955fb6c8890e05887b4e4fec6bbcdb74e25e11fcdb034c22296",
+    "regenerated_answer": "[75dfae62]\n\nSince your credit card deposit got declined, we recommend checking if it's due to a CVV failure, deposit limit, SCA failure, or RCS reject. You can contact your bank to check the reason for the decline and try again after 1-2 hours to make a deposit.",
+    "second_verification": [
+      {
+        "claim": "Your credit card deposit got declined",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f76a8e75"
+        ],
+        "explanation": "The text states that the reason for the decline is due to a CVV failure, deposit limit, SCA failure, or RCS reject."
+      },
+      {
+        "claim": "We process your deposits and withdrawals internally within 24 hours",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "The text states that the processing time is 24 hours, depending on the payment method and internal checks."
+      },
+      {
+        "claim": "The minimum deposit and withdrawal amount varies depending on the payment method",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "The text states that the lowest deposit and withdrawal amount is 5 to 10 USD/EUR/GBP/AUD via e-wallets."
+      },
+      {
+        "claim": "We'll remove the 10,000 USD withdrawal limit once your account has been verified",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "The text states that the withdrawal limit will be removed after verification."
+      },
+      {
+        "claim": "You can use debit and credit cards, e-wallets, cryptocurrency wallets, Deriv P2P, online banking, and fiat onramp for deposits and withdrawals",
+        "grounded": true,
+        "supporting_chunk_ids": [
+          "f511bd3a"
+        ],
+        "explanation": "The text states that these payment methods are available for deposits and withdrawals."
+      },
+      {
+        "claim": "We try to review your verification documents within the same day",
+        "grounded": false,
+        "supporting_chunk_ids": [
+          "6ad50e8d"
+        ],
+        "explanation": "The text does not provide a specific timeframe for document review."
+      }
+    ],
+    "quality_scores": {
+      "completeness": 7,
+      "specificity": 6,
+      "tone": 5
+    },
+    "flagged_for_review": true,
+    "final_response": "[75dfae62]\n\nSince your credit card deposit got declined, we recommend checking if it's due to a CVV failure, deposit limit, SCA failure, or RCS reject. You can contact your bank to check the reason for the decline and try again after 1-2 hours to make a deposit."
   }
 ]
