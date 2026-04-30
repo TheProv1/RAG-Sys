@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 # --- CONFIGURATION ---
 OLLAMA_URL = "http://localhost:11434/api/generate"
 OLLAMA_MODEL = "llama3.2"  
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5" # SOTA for RAG Q&A retrieval, vastly outperforms MiniLM
 
 # File artifacts
 SOURCES_FILE = "sources.json"
@@ -84,111 +84,90 @@ def call_llm(prompt, stage, query_id=None, inputs=[], output_file=""):
         print(f"\n[!] LLM Call failed ({stage}): {e}")
         return ""
 
-# --- STAGE 1: INTELLIGENT ACCORDION SCRAPING & CHUNKING ---
-def extract_text(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    for tag in soup(["script", "style", "nav", "footer", "header", "noscript", "svg", "form", "iframe", "meta"]):
-        tag.decompose()
+# --- STAGE 1: SCRAPING, NOISE PURGE & CHUNKING ---
+def clean_and_chunk(text, url, min_tokens=200, max_tokens=350):
+    # 1. Strip Markdown links and images completely
+    text = re.sub(r'!\[.*?\]\(.*?\)', '', text)
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+    text = re.sub(r'http[s]?://\S+', '', text)
+    
+    # 2. Isolate FAQ content (Deriv Q&As start with ## from Jina)
+    first_q = text.find('## ')
+    if first_q != -1: text = text[first_q:]
+    footer_idx = text.find('Still need help?')
+    if footer_idx != -1: text = text[:footer_idx]
         
-    block_elements =['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'article', 'section', 'button', 'details', 'summary']
-    for tag in soup.find_all(block_elements):
-        tag.insert_before('\n\n')
-        tag.insert_after('\n\n')
+    # 3. Strip known garbage strings that ruin embedding similarity
+    garbage =[
+        "Thank you! Your submission has been received!",
+        "Oops! Something went wrong while submitting the form.",
+        "Empty state", "Sorry, we couldn't find any results",
+        "Live chat", "WhatsApp us", "Search", "Menu"
+    ]
+    for g in garbage:
+        text = text.replace(g, "")
         
-    text = soup.get_text(separator=' ', strip=True)
-    text = re.sub(r'[ \t]+', ' ', text)
-    text = re.sub(r'\n\s*\n', '\n\n', text)
-    return text.strip()
-
-def chunk_text(text, url, min_tokens=200, max_tokens=350):
+    text = re.sub(r'\n{3,}', '\n\n', text).strip()
+    
     enc = tiktoken.get_encoding("cl100k_base")
     tokens = enc.encode(text)
-    
     chunks =[]
     idx = 0
+    
+    # 4. Strictly chunk between 200 - 350 tokens per constraints
     while idx < len(tokens):
         end_idx = min(idx + max_tokens, len(tokens))
-        chunk_tokens = tokens[idx:end_idx]
         
-        # Look backwards to find safe breaks so dropdown questions aren't separated from answers
         if end_idx < len(tokens):
-            chunk_text_raw = enc.decode(chunk_tokens)
-            last_break = chunk_text_raw.rfind('\n\n')
-            if last_break == -1:
-                last_break = chunk_text_raw.rfind('\n')
-            
-            if last_break != -1 and last_break > len(chunk_text_raw) // 2:
-                sub_text = chunk_text_raw[:last_break+1].strip()
+            raw = enc.decode(tokens[idx:end_idx])
+            last_break = raw.rfind('\n\n')
+            if last_break == -1: last_break = raw.rfind('\n## ')
+            if last_break == -1: last_break = raw.rfind('. ')
+                
+            if last_break != -1 and last_break > len(raw) * 0.5:
+                sub_text = raw[:last_break+2].strip()
                 sub_tokens = enc.encode(sub_text)
                 if len(sub_tokens) >= min_tokens:
-                    chunk_tokens = sub_tokens
-                    end_idx = idx + len(chunk_tokens)
+                    end_idx = idx + len(sub_tokens)
                     
-        chunk_text_final = enc.decode(chunk_tokens).strip()
-        if not chunk_text_final:
-            idx = end_idx
-            continue
-            
-        chunk_hash = hashlib.sha256(chunk_text_final.encode('utf-8')).hexdigest()
-        chunk_id = hashlib.md5(f"{url}_{idx}".encode('utf-8')).hexdigest()[:8]
-        
-        chunks.append({
-            "chunk_id": chunk_id,
-            "source_url": url,
-            "section_title": "Help Centre Content",
-            "chunk_index": len(chunks),
-            "token_count": len(chunk_tokens),
-            "content_hash": chunk_hash,
-            "text": chunk_text_final
-        })
+        chunk_text = enc.decode(tokens[idx:end_idx]).strip()
+        if chunk_text:
+            chunk_hash = hashlib.sha256(chunk_text.encode('utf-8')).hexdigest()
+            chunk_id = hashlib.md5(f"{url}_{idx}".encode('utf-8')).hexdigest()[:8]
+            chunks.append({
+                "chunk_id": chunk_id,
+                "source_url": url,
+                "section_title": "Help Centre FAQ",
+                "chunk_index": len(chunks),
+                "token_count": len(enc.encode(chunk_text)),
+                "content_hash": chunk_hash,
+                "text": chunk_text
+            })
         idx = end_idx
-        
     return chunks
 
 def ingest_sources():
     with open(SOURCES_FILE, 'r') as f:
-        sources = json.load(f).get("sources",[])
+        sources = json.load(f).get("sources", [])
     
     all_chunks =[]
-    
     for url in sources:
         text = ""
         try:
             print(f"[*] Fetching {url}...")
-            
-            # TIER 1: Jina AI Reader (Bypasses Cloudflare & JS React Shells, returns raw Markdown text)
             jina_url = f"https://r.jina.ai/{url}"
             resp = requests.get(jina_url, headers={"User-Agent": "DerivRAG/1.0", "Accept": "text/plain"}, timeout=20)
             
-            if resp.status_code == 200 and len(resp.text) > 200:
+            if resp.status_code == 200 and len(resp.text) > 100:
                 text = resp.text
             else:
-                print(f"[!] Jina fetch failed or blocked. Attempting live fetch...")
-                
-                # TIER 2: Standard Live Fetch
-                headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0 Safari/537.36",
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-                }
-                live_resp = requests.get(url, headers=headers, timeout=15)
+                live_resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
                 if live_resp.status_code == 200:
-                    text = extract_text(live_resp.text)
-                
-                # TIER 3: Wayback Machine API Fallback
-                if len(text) < 200:
-                    print(f"[!] Live fetch lacks text (Cloudflare/SPA shell detected). Querying Archive.org...")
-                    api_url = f"https://archive.org/wayback/available?url={urllib.parse.quote(url)}"
-                    api_resp = requests.get(api_url, headers={"User-Agent": "DerivRAG/1.0"}, timeout=15)
-                    if api_resp.status_code == 200:
-                        snapshots = api_resp.json().get("archived_snapshots", {})
-                        if "closest" in snapshots and snapshots["closest"].get("available"):
-                            archive_url = snapshots["closest"]["url"].replace("http://", "https://")
-                            arch_resp = requests.get(archive_url, headers=headers, timeout=30)
-                            if arch_resp.status_code == 200:
-                                text = extract_text(arch_resp.text)
+                    soup = BeautifulSoup(live_resp.text, 'html.parser')
+                    text = soup.get_text(separator='\n\n', strip=True)
 
-            if len(text) > 150:
-                all_chunks.extend(chunk_text(text, url))
+            if len(text) > 50:
+                all_chunks.extend(clean_and_chunk(text, url))
             else:
                 print(f"[!] Could not extract meaningful text from {url}")
 
@@ -237,7 +216,7 @@ def process_corpus():
         except Exception: pass
         
     model = SentenceTransformer(EMBEDDING_MODEL)
-    final_embeddings, texts_to_embed, ids_to_embed = {}, [], []
+    final_embeddings, texts_to_embed, ids_to_embed = {}, [],[]
     
     for c in new_chunks:
         cid = c["chunk_id"]
@@ -264,12 +243,15 @@ def cosine_similarity(a, b):
 def retrieve(query, corpus, embeddings, top_k=5):
     if not corpus or not embeddings: return[]
     model = SentenceTransformer(EMBEDDING_MODEL)
-    q_emb = model.encode([query])[0]
     
-    scores =[(cosine_similarity(q_emb, embeddings[c["chunk_id"]]), c) for c in corpus]
+    # BGE-small requires this prefix for queries to unlock highest similarity accuracy
+    instruction = "Represent this sentence for searching relevant passages: "
+    q_emb = model.encode([instruction + query])[0]
+    
+    scores = [(cosine_similarity(q_emb, embeddings[c["chunk_id"]]), c) for c in corpus]
     scores.sort(key=lambda x: x[0], reverse=True)
     
-    top_chunks =[]
+    top_chunks = []
     for score, c in scores[:top_k]:
         c_copy = c.copy()
         c_copy["similarity"] = float(score)
@@ -280,7 +262,7 @@ def retrieve(query, corpus, embeddings, top_k=5):
 def generate_answer(query, chunks, query_id="CLI", ungrounded_claims=None):
     context = "\n".join([f"Chunk ID: [{c['chunk_id']}]\nText: {c['text']}" for c in chunks])
     prompt = f"Context:\n{context}\n\nQuery: {query}\n\n"
-    prompt += "Answer the query ONLY using the provided context. You MUST cite source chunk IDs exactly as [Chunk ID] in your answer.\n"
+    prompt += "Answer the query ONLY using the provided context. DO NOT include any images or web links. You MUST cite source chunk IDs exactly as [Chunk ID] in your answer.\n"
     if ungrounded_claims:
         prompt += f"CRITICAL: The following claims were previously marked ungrounded. Do NOT include them:\n{ungrounded_claims}\n"
         
@@ -295,7 +277,7 @@ def verify_grounding(answer, chunks, query_id="CLI"):
     prompt += "Identify every factual claim in the Answer. For each claim, check if it is directly supported by the Context.\n"
     prompt += "Output ONLY a JSON array of objects with keys: 'claim', 'grounded' (boolean), 'supporting_chunk_ids' (array of strings), 'explanation' (string). No markdown, no preamble."
     
-    ver_str = call_llm(prompt, "GROUNDING_VERIFICATION", query_id, [ANSWERS_FILE], GROUNDING_FILE)
+    ver_str = call_llm(prompt, "GROUNDING_VERIFICATION", query_id,[ANSWERS_FILE], GROUNDING_FILE)
     ver_json = extract_json(ver_str) or[]
     
     with open(GROUNDING_FILE, 'a') as f:
@@ -316,7 +298,7 @@ def process_query(query, query_id, corpus, embeddings, history=None):
     if history:
         hist_text = "\n".join([f"{m['role']}: {m['content']}" for m in history[-2:]])
         prompt = f"Conversation History:\n{hist_text}\n\nUser Query: {query}\n\nRewrite the Query to be standalone. Output only the query text."
-        search_query = call_llm(prompt, "QUERY_EXPANSION", query_id)
+        search_query = call_llm(prompt, "QUERY_EXPANSION", query_id).strip('"\' \n') # Strip quotes from rewrite
 
     chunks = retrieve(search_query, corpus, embeddings)
     max_sim = chunks[0]["similarity"] if chunks else 0.0
@@ -326,6 +308,7 @@ def process_query(query, query_id, corpus, embeddings, history=None):
         
     audit_record = {"query_id": query_id, "query": query, "search_query": search_query, "retrieved_chunks": chunks, "fallback": False}
 
+    # Deterministic Confidence Check (Must be >= 0.72)
     if max_sim < 0.72:
         fallback_msg = f"I cannot confidently answer this based on the retrieved context. (Confidence: {max_sim:.2f}). "
         if chunks: fallback_msg += f"You might find help here: {chunks[0]['source_url']}"
@@ -352,20 +335,20 @@ def process_query(query, query_id, corpus, embeddings, history=None):
 
     scores = score_quality(ans, query_id)
     audit_record["quality_scores"] = scores
-    audit_record["flagged_for_review"] = any(scores.get(k, 0) < 6 for k in["completeness", "specificity", "tone"])
+    audit_record["flagged_for_review"] = any(scores.get(k, 0) < 6 for k in ["completeness", "specificity", "tone"])
     audit_record["final_response"] = ans
     
     return ans, audit_record
 
 # --- GAP DETECTION ---
 def gap_detection(audit_records):
-    low_conf_queries =[r["query"] for r in audit_records if r.get("fallback") or r.get("retrieved_chunks", [{}])[0].get("similarity", 0) < 0.72]
+    low_conf_queries = [r["query"] for r in audit_records if r.get("fallback") or r.get("retrieved_chunks", [{}])[0].get("similarity", 0) < 0.72]
     if not low_conf_queries: return
         
     prompt = f"Queries with low retrieval confidence:\n{json.dumps(low_conf_queries)}\n\n"
-    prompt += "Cluster these queries into topics. You MUST output ONLY a JSON array. Example:[{\"topic\": \"Finance\", \"query_ids\":[\"Q1\"], \"evidence\": \"No data\", \"recommended_content_improvement\": \"Add a finance page\"}]"
+    prompt += "Cluster these queries into topics. You MUST output ONLY a JSON array. Example:[{\"topic\": \"Finance\", \"query_ids\": [\"Q1\"], \"evidence\": \"No data\", \"recommended_content_improvement\": \"Add a finance page\"}]"
     
-    gap_str = call_llm(prompt, "GAP_DETECTION", "SYSTEM", [], GAP_FILE)
+    gap_str = call_llm(prompt, "GAP_DETECTION", "SYSTEM",[], GAP_FILE)
     gaps = extract_json(gap_str) or[]
     
     with open(GAP_FILE, 'w') as f:
