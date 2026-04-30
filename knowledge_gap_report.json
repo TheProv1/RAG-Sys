@@ -1,0 +1,33 @@
+[
+  {
+    "topic": "Account Management",
+    "query_ids": [
+      "Q2",
+      "Q4",
+      "Q5",
+      "Q7"
+    ],
+    "evidence": "No data",
+    "recommended_content_improvement": "Add an account management page"
+  },
+  {
+    "topic": "Security and Safety",
+    "query_ids": [
+      "Q1",
+      "Q3",
+      "Q6"
+    ],
+    "evidence": "No data",
+    "recommended_content_improvement": "Add a security and safety page"
+  },
+  {
+    "topic": "Trading and Investment",
+    "query_ids": [
+      "Q2",
+      "Q4",
+      "Q7"
+    ],
+    "evidence": "No data",
+    "recommended_content_improvement": "Add a trading and investment page"
+  }
+]
